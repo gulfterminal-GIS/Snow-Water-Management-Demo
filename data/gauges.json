@@ -1,0 +1,119 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "09050700",
+      "geometry": { "type": "Point", "coordinates": [-106.0689, 39.6300] },
+      "properties": {
+        "stationId": "09050700",
+        "abbrev": "BLUDILCO",
+        "name": "Blue River below Dillon",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 42,
+        "stageFt": 2.18,
+        "assignedTo": "reservoir",
+        "targetId": "Dillon Reservoir",
+        "placed": true,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "09046600",
+      "geometry": { "type": "Point", "coordinates": [-106.0438, 39.5914] },
+      "properties": {
+        "stationId": "09046600",
+        "abbrev": "BLUDILCO2",
+        "name": "Blue River at Dillon",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 38,
+        "stageFt": 1.94,
+        "assignedTo": "river",
+        "targetId": "Blue River",
+        "placed": true,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "09057500",
+      "geometry": { "type": "Point", "coordinates": [-106.3328, 39.8786] },
+      "properties": {
+        "stationId": "09057500",
+        "abbrev": "BLUGRNCO",
+        "name": "Blue River below Green Mountain Reservoir",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 28,
+        "stageFt": 3.41,
+        "assignedTo": "reservoir",
+        "targetId": "Green Mountain Reservoir",
+        "placed": true,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "09047500",
+      "geometry": { "type": "Point", "coordinates": [-105.8681, 39.5742] },
+      "properties": {
+        "stationId": "09047500",
+        "abbrev": "SNKMONCO",
+        "name": "Snake River near Montezuma",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 19,
+        "stageFt": 1.12,
+        "assignedTo": "watershed",
+        "targetId": "Blue River Watershed",
+        "placed": true,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "09050100",
+      "geometry": { "type": "Point", "coordinates": [-106.1180, 39.5745] },
+      "properties": {
+        "stationId": "09050100",
+        "abbrev": "TNMFRSCO",
+        "name": "Tenmile Creek near Frisco",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 24,
+        "stageFt": 1.56,
+        "assignedTo": "river",
+        "targetId": "Blue River",
+        "placed": true,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "09041900",
+      "geometry": { "type": "Point", "coordinates": [-106.0470, 39.5120] },
+      "properties": {
+        "stationId": "09041900",
+        "abbrev": "BLUBRECO",
+        "name": "Blue River near Breckenridge",
+        "agency": "USGS / Colorado DWR",
+        "parameter": "Streamflow",
+        "flowCfs": 31,
+        "stageFt": 1.73,
+        "assignedTo": "watershed",
+        "targetId": "Blue River Watershed",
+        "placed": false,
+        "official": true,
+        "dwrUrl": "https://dwr.state.co.us/Tools/Stations?Stations=Current&submitButton=Submit&SelectedDataCategory=Surface%20Water"
+      }
+    }
+  ]
+}

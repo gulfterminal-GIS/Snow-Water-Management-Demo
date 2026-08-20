@@ -1,0 +1,69 @@
+{
+  "demo": true,
+  "asOf": "2026-03-18",
+  "watershed": {
+    "name": "Blue River Watershed",
+    "huc8": "14010002",
+    "state": "Colorado",
+    "areaAcres": 437217,
+    "areaKm2": 1769
+  },
+  "swe": {
+    "inches": 14.2,
+    "kaf": 517.4,
+    "previousYearInches": 12.6,
+    "previousYearKaf": 459.1,
+    "changeInches": 1.6,
+    "changePercent": 12.7,
+    "seriesLabels": ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    "currentYear": [1.2, 3.8, 6.4, 9.1, 12.8, 14.2, 13.1, 8.4, 3.2, 0.6],
+    "previousYear": [1.0, 3.2, 5.8, 8.4, 11.2, 12.6, 11.8, 7.1, 2.8, 0.4]
+  },
+  "reservoirs": [
+    {
+      "name": "Dillon Reservoir",
+      "owner": "Denver Water",
+      "capacityAf": 257000,
+      "storageAf": 198400,
+      "percentFull": 77.2,
+      "inflowCfs": 42,
+      "outflowCfs": 31,
+      "hasWaterLevelSensors": true
+    },
+    {
+      "name": "Green Mountain Reservoir",
+      "owner": "Bureau of Reclamation",
+      "capacityAf": 153639,
+      "storageAf": 112200,
+      "percentFull": 73.0,
+      "inflowCfs": 36,
+      "outflowCfs": 28,
+      "hasWaterLevelSensors": true
+    }
+  ],
+  "totals": {
+    "storageAf": 310600,
+    "storageKaf": 310.6,
+    "capacityAf": 410639,
+    "inflowCfs": 42,
+    "outflowCfs": 28
+  },
+  "climate": {
+    "temperatureF": 28.4,
+    "etInchesMonth": 0.42,
+    "soilMoisturePct": 34
+  },
+  "forecast": {
+    "horizonDays": 10,
+    "horizonNote": "CBRFC 10-day forecast. Water managers typically use a 7 to 14 day window.",
+    "station": "Blue River below Dillon",
+    "labels": ["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10"],
+    "cfs": [44, 46, 51, 58, 62, 59, 55, 52, 48, 46]
+  },
+  "seasonal": {
+    "aprJulKaf": 186.2,
+    "aprSepKaf": 214.8,
+    "aprJulPriorKaf": 171.4,
+    "aprSepPriorKaf": 198.1
+  }
+}

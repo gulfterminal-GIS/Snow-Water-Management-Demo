@@ -1,1819 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blue River Watershed - Snow & Water Management System</title>
-
-<!-- Mapbox GL JS -->
-<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-/* ================================================
-   ROOT VARIABLES - Professional, Formal Theme
-   ================================================ */
-:root {
-  /* Light Mode Colors - Corporate & Professional */
-  --primary-bg: #FFFFFF;
-  --secondary-bg: #F8F9FA;
-  --tertiary-bg: #E9ECEF;
-  --border-color: #DEE2E6;
-  --border-light: #E9ECEF;
-  
-  /* Text Colors */
-  --text-primary: #212529;
-  --text-secondary: #495057;
-  --text-tertiary: #6C757D;
-  --text-disabled: #ADB5BD;
-  
-  /* Accent Colors - Professional Palette */
-  --water-blue: #0D6EFD;
-  --water-light: #CCE5FF;
-  --river-blue: #1E88E5;
-  --reservoir-blue: #1565C0;
-  --dam-gray: #495057;
-  --gauge-green: #198754;
-  --alert-red: #DC3545;
-  --warning-amber: #FD7E14;
-  
-  /* Typography */
-  --font-primary: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-secondary: 'Cairo', sans-serif;
-  
-  /* Spacing & Layout */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.10);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
-}
-
-/* ================================================
-   GLOBAL RESET
-   ================================================ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  height: 100%;
-  font-family: var(--font-primary);
-  color: var(--text-primary);
-  background: var(--secondary-bg);
-  overflow: hidden;
-}
-
-/* ================================================
-   LAYOUT STRUCTURE
-   ================================================ */
-#app {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ================================================
-   TOP HEADER
-   ================================================ */
-#header {
-  height: 64px;
-  background: var(--primary-bg);
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  box-shadow: var(--shadow-sm);
-  z-index: 100;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.logo {
-  width: 40px;
-  height: 40px;
-  background: var(--water-blue);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-  font-family: var(--font-secondary);
-}
-
-.header-title {
-  display: flex;
-  flex-direction: column;
-}
-
-.header-title h1 {
-  font-size: 18px;
-  font-weight: 600;
-  font-family: var(--font-secondary);
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-.header-title p {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  font-weight: 400;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.basin-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-}
-
-.basin-selector label {
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.basin-selector select {
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  outline: none;
-  cursor: pointer;
-  font-family: var(--font-primary);
-}
-
-/* ================================================
-   MAIN CONTENT AREA
-   ================================================ */
-#main-content {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-}
-
-/* ================================================
-   LEFT SIDEBAR
-   ================================================ */
-#sidebar {
-  width: 320px;
-  background: var(--primary-bg);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-header h2 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  font-family: var(--font-secondary);
-}
-
-.sidebar-header p {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.sidebar-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--secondary-bg);
-}
-
-.sidebar-tab {
-  flex: 1;
-  padding: 12px 8px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.sidebar-tab:hover {
-  background: var(--tertiary-bg);
-}
-
-.sidebar-tab.active {
-  color: var(--water-blue);
-  border-bottom-color: var(--water-blue);
-  background: var(--primary-bg);
-}
-
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
-
-.sidebar-panel {
-  display: none;
-}
-
-.sidebar-panel.active {
-  display: block;
-}
-
-/* Layer Controls */
-.layer-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  margin-bottom: 8px;
-}
-
-.layer-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.layer-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary-bg);
-  border-radius: var(--radius-sm);
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.layer-details h4 {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 2px;
-}
-
-.layer-details span {
-  font-size: 11px;
-  color: var(--text-tertiary);
-}
-
-.toggle-switch {
-  position: relative;
-  width: 44px;
-  height: 24px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background: var(--border-color);
-  border-radius: 24px;
-  transition: 0.3s;
-}
-
-.toggle-slider:before {
-  content: '';
-  position: absolute;
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background: var(--water-blue);
-}
-
-.toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(20px);
-}
-
-/* Legend Items */
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.legend-item:last-child {
-  border-bottom: none;
-}
-
-.legend-symbol {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.legend-line {
-  width: 24px;
-  height: 3px;
-  border-radius: 2px;
-}
-
-.legend-text {
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-/* ================================================
-   MAP CONTAINER
-   ================================================ */
-#map-container {
-  flex: 1;
-  position: relative;
-}
-
-#map {
-  width: 100%;
-  height: 100%;
-}
-
-/* ================================================
-   MAP CONTROLS - Separate Widget Style
-   ================================================ */
-#map-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 10;
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.control-btn {
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(222, 226, 230, 0.8);
-  border-radius: 12px;
-  cursor: pointer;
-  color: #6C757D;
-  transition: all 0.25s ease;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.control-btn:hover {
-  background: white;
-  color: var(--water-blue);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
-  border-color: var(--water-blue);
-}
-
-.control-btn.active {
-  background: var(--water-blue);
-  color: white;
-  border-color: var(--water-blue);
-  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
-}
-
-.control-btn svg {
-  width: 28px;
-  height: 28px;
-  stroke-width: 2.2;
-}
-
-.control-tooltip {
-  position: absolute;
-  right: 64px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(33, 37, 41, 0.95);
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.control-tooltip::after {
-  content: '';
-  position: absolute;
-  right: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 6px solid rgba(33, 37, 41, 0.95);
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-}
-
-.control-btn:hover .control-tooltip {
-  opacity: 1;
-}
-
-/* ================================================
-   STATUS BAR
-   ================================================ */
-#status-bar {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 16px;
-  background: var(--primary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 12px 20px;
-  box-shadow: var(--shadow-lg);
-  z-index: 10;
-}
-
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border-right: 1px solid var(--border-light);
-}
-
-.status-item:last-child {
-  border-right: none;
-  padding-right: 0;
-}
-
-.status-icon {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.status-label {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  font-weight: 500;
-}
-
-.status-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-family: var(--font-secondary);
-}
-
-/* ================================================
-   DETAIL PANEL (Right Side)
-   ================================================ */
-#detail-panel {
-  position: absolute;
-  top: 20px;
-  right: 80px;
-  width: 360px;
-  max-height: calc(100vh - 140px);
-  background: var(--primary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  z-index: 15;
-  transform: translateX(400px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-#detail-panel.open {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.detail-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.detail-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-family: var(--font-secondary);
-}
-
-.detail-type {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--water-blue);
-  background: var(--water-light);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-
-.detail-close {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.detail-close:hover {
-  color: var(--text-primary);
-}
-
-.detail-body {
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.detail-stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.detail-stat {
-  background: var(--secondary-bg);
-  padding: 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
-}
-
-.detail-stat-label {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-
-.detail-stat-value {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-family: var(--font-secondary);
-}
-
-.detail-link {
-  display: block;
-  padding: 12px;
-  background: var(--water-blue);
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 16px;
-  transition: all 0.2s;
-}
-
-.detail-link:hover {
-  background: var(--river-blue);
-}
-
-/* ================================================
-   MAPBOX POPUP CUSTOMIZATION
-   ================================================ */
-.mapboxgl-popup-content {
-  background: var(--primary-bg) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
-  padding: 0 !important;
-  font-family: var(--font-primary) !important;
-}
-
-.mapboxgl-popup-close-button {
-  color: var(--text-tertiary) !important;
-  font-size: 18px !important;
-  padding: 8px !important;
-}
-
-.popup-content {
-  padding: 16px;
-  min-width: 240px;
-}
-
-.popup-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.popup-info {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.popup-info strong {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-/* ================================================
-   ANIMATIONS
-   ================================================ */
-@keyframes water-flow {
-  0% {
-    stroke-dashoffset: 1000;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.1);
-  }
-}
-
-.water-flow-animation {
-  animation: water-flow 4s linear infinite;
-}
-
-.marker-pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* ================================================
-   ADD MARKER FLYOUT
-   ================================================ */
-#add-marker-menu {
-  position: absolute;
-  background: var(--primary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  padding: 8px;
-  display: none;
-  z-index: 20;
-  min-width: 180px;
-}
-
-#add-marker-menu.open {
-  display: block;
-}
-
-.marker-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.marker-option:hover {
-  background: var(--secondary-bg);
-}
-
-.marker-option-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.marker-option-text {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-/* ================================================
-   RESPONSIVE DESIGN
-   ================================================ */
-@media (max-width: 1024px) {
-  #sidebar {
-    width: 280px;
-  }
-  
-  #detail-panel {
-    width: 320px;
-  }
-}
-
-@media (max-width: 768px) {
-  #sidebar {
-    position: absolute;
-    left: 0;
-    top: 64px;
-    bottom: 0;
-    z-index: 50;
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-  }
-  
-  #sidebar.open {
-    transform: translateX(0);
-  }
-  
-  #status-bar {
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 12px;
-  }
-  
-  .status-item {
-    border-right: none;
-    border-bottom: 1px solid var(--border-light);
-    padding: 4px 0;
-  }
-  
-  .status-item:last-child {
-    border-bottom: none;
-  }
-}
-
-/* ================================================
-   LOADING SPINNER
-   ================================================ */
-.loading-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-color);
-  border-top-color: var(--water-blue);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ================================================
-   UTILITY CLASSES
-   ================================================ */
-.hidden {
-  display: none !important;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.mb-8 {
-  margin-bottom: 8px;
-}
-
-.mb-16 {
-  margin-bottom: 16px;
-}
-
-.mt-16 {
-  margin-top: 16px;
-}
-
-/* Remove Mapbox attribution */
-.mapboxgl-ctrl-attrib,
-.mapboxgl-ctrl-logo {
-  display: none !important;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blue River Watershed: Snow and Water Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.28.1/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.css" rel="stylesheet" />
+  <link href="css/app.css" rel="stylesheet" />
 </head>
 <body>
-
 <div id="app">
-  <!-- HEADER -->
   <header id="header">
     <div class="header-left">
       <div class="logo">BR</div>
       <div class="header-title">
         <h1>Blue River Watershed Management</h1>
-        <p>Snow & Water Monitoring System - Colorado</p>
+        <p>Snow and water monitoring, Colorado River Basin</p>
       </div>
+      <span class="demo-badge">Demo values</span>
     </div>
     <div class="header-right">
-      <div class="basin-selector">
-        <label>Basin</label>
-        <select id="basin-select">
-          <option value="colorado">Colorado River Basin</option>
-          <option value="blue" selected>Blue River Sub-Basin</option>
-        </select>
+      <div class="header-location">
+        <div class="crumb">
+          <span>Colorado River Basin</span>
+          <span>/</span>
+          <strong>Blue River</strong>
+        </div>
+        <div class="header-select">
+          <label for="basin-select">Basin</label>
+          <select id="basin-select"></select>
+        </div>
       </div>
+      <button class="btn" id="btn-report" type="button">Report</button>
+      <button class="btn btn-primary" id="btn-excel" type="button">Excel</button>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <div id="main-content">
-    <!-- LEFT SIDEBAR -->
+  <div id="main">
     <aside id="sidebar">
       <div class="sidebar-header">
-        <h2>Watershed Overview</h2>
-        <p>Area: 437,217 Acres (1,769 km²)</p>
+        <h2>Watershed overview</h2>
+        <p>HUC8 14010002 · 437,217 acres (1,769 km²)</p>
       </div>
-
-      <div class="sidebar-tabs">
-        <div class="sidebar-tab active" data-tab="layers">Layers</div>
-        <div class="sidebar-tab" data-tab="legend">Legend</div>
-        <div class="sidebar-tab" data-tab="data">Data</div>
+      <div class="tabs">
+        <button class="tab active" data-tab="layers" type="button">Layers</button>
+        <button class="tab" data-tab="catalog" type="button">Catalog</button>
+        <button class="tab" data-tab="dashboard" type="button">Dashboard</button>
+        <button class="tab" data-tab="data" type="button">Data</button>
       </div>
-
-      <div class="sidebar-content">
-        <!-- LAYERS PANEL -->
-        <div class="sidebar-panel active" id="panel-layers">
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--text-secondary);">▢</div>
-              <div class="layer-details">
-                <h4>Basin Boundary</h4>
+      <div class="sidebar-body">
+        <div class="panel active" id="panel-layers">
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-basin" data-icon="basin"></div>
+              <div>
+                <h4>Basin boundary</h4>
                 <span>Colorado River Basin</span>
               </div>
             </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-basin">
-              <span class="toggle-slider"></span>
-            </label>
+            <label class="toggle"><input type="checkbox" checked id="toggle-basin" /><span></span></label>
           </div>
-
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--water-blue);">▭</div>
-              <div class="layer-details">
-                <h4>Watershed Boundary</h4>
-                <span>Blue River Area</span>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-watershed" data-icon="watershed"></div>
+              <div>
+                <h4>Watershed boundary</h4>
+                <span>Blue River</span>
               </div>
             </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-watershed">
-              <span class="toggle-slider"></span>
-            </label>
+            <label class="toggle"><input type="checkbox" checked id="toggle-watershed" /><span></span></label>
           </div>
-
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--river-blue);">≈</div>
-              <div class="layer-details">
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-river" data-icon="river"></div>
+              <div>
                 <h4>Blue River</h4>
-                <span>Perennial Stream</span>
+                <span>Main stem</span>
               </div>
             </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-river">
-              <span class="toggle-slider"></span>
-            </label>
+            <label class="toggle"><input type="checkbox" checked id="toggle-river" /><span></span></label>
           </div>
-
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--reservoir-blue);">▰</div>
-              <div class="layer-details">
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-reservoir" data-icon="reservoir"></div>
+              <div>
                 <h4>Reservoirs</h4>
-                <span>2 reservoirs</span>
+                <span>Dillon · Green Mountain</span>
               </div>
             </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-reservoirs">
-              <span class="toggle-slider"></span>
-            </label>
+            <label class="toggle"><input type="checkbox" checked id="toggle-reservoirs" /><span></span></label>
           </div>
-
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--dam-gray);">▬</div>
-              <div class="layer-details">
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-dam" data-icon="dam"></div>
+              <div>
                 <h4>Dams</h4>
-                <span>2 dams</span>
+                <span>2 structures</span>
               </div>
             </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-dams">
-              <span class="toggle-slider"></span>
-            </label>
+            <label class="toggle"><input type="checkbox" checked id="toggle-dams" /><span></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-gauge" data-icon="gauge"></div>
+              <div>
+                <h4>Gauge stations</h4>
+                <span>Colorado DWR / USGS</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="toggle-gauges" /><span></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-sensor" data-icon="sensor"></div>
+              <div>
+                <h4>Water level sensors</h4>
+                <span>Within reservoirs</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="toggle-sensors" /><span></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-note" data-icon="note"></div>
+              <div>
+                <h4>Field notes</h4>
+                <span>User pins</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="toggle-notes" /><span></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-terrain" data-icon="terrain"></div>
+              <div>
+                <h4>3D terrain</h4>
+                <span>Mapbox DEM</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="toggle-terrain" /><span></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-meta">
+              <div class="layer-icon icon-snow" data-icon="snow"></div>
+              <div>
+                <h4>Snow mode</h4>
+                <span>Winter atmosphere</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="toggle-snow" /><span></span></label>
           </div>
 
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--gauge-green);">◉</div>
-              <div class="layer-details">
-                <h4>Gauge Stations</h4>
-                <span>Flow monitoring</span>
-              </div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-gauges">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
+          <div class="section-label">Legend</div>
+          <div class="legend-row"><span style="width:18px;height:3px;background:#6B778C;display:inline-block;"></span> Basin</div>
+          <div class="legend-row"><span style="width:18px;height:3px;background:#0F766E;display:inline-block;"></span> Watershed</div>
+          <div class="legend-row"><span style="width:18px;height:3px;background:#1D8CD6;display:inline-block;"></span> River</div>
+          <div class="legend-row"><span style="width:18px;height:3px;background:#1B7A4A;display:inline-block;"></span> Upstream reach</div>
+          <div class="legend-row"><span style="width:18px;height:3px;background:#C45C26;display:inline-block;"></span> Downstream reach</div>
+          <div class="legend-row"><span style="width:14px;height:10px;background:#0E7490;display:inline-block;border-radius:2px;"></span> Reservoir</div>
 
-          <div class="layer-item">
-            <div class="layer-info">
-              <div class="layer-icon" style="color: var(--text-secondary);">△</div>
-              <div class="layer-details">
-                <h4>3D Terrain</h4>
-                <span>Elevation model</span>
-              </div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked id="toggle-terrain">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
+          <div class="section-label">User-drawn layers</div>
+          <div id="user-layers-list" class="muted">No user boundaries yet. Use Draw to add a basin, watershed, or sub-basin.</div>
         </div>
 
-        <!-- LEGEND PANEL -->
-        <div class="sidebar-panel" id="panel-legend">
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 20px; height: 3px; background: var(--text-secondary); border-radius: 2px;"></div>
-            </div>
-            <span class="legend-text">Basin Boundary</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 20px; height: 3px; background: var(--water-blue); border-radius: 2px;"></div>
-            </div>
-            <span class="legend-text">Watershed Boundary</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 20px; height: 3px; background: var(--river-blue); border-radius: 2px;"></div>
-            </div>
-            <span class="legend-text">Blue River</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 20px; height: 12px; background: var(--reservoir-blue); border-radius: 3px;"></div>
-            </div>
-            <span class="legend-text">Reservoir</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 16px; height: 16px; background: var(--dam-gray); border-radius: 2px;"></div>
-            </div>
-            <span class="legend-text">Dam Structure</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">◉</div>
-            <span class="legend-text">Gauge Station</span>
-          </div>
-
-          <div class="legend-item">
-            <div class="legend-symbol">
-              <div style="width: 12px; height: 12px; background: var(--gauge-green); border-radius: 50%;"></div>
-            </div>
-            <span class="legend-text">Active Monitoring Point</span>
-          </div>
+        <div class="panel" id="panel-catalog">
+          <p class="draw-hint">Choose a Colorado DWR-style gauge, then click Place and drop it on the map. You can also drag a station onto a reservoir, river, or watershed.</p>
+          <div class="section-label">Gauging stations</div>
+          <div id="gauge-catalog"></div>
+          <div class="section-label">Add on map</div>
+          <button class="btn" id="btn-add-note-form" type="button" style="width:100%;margin-bottom:8px;">Add field note</button>
+          <button class="btn" id="btn-add-diversion" type="button" style="width:100%;">Place diversion / reversion</button>
         </div>
 
-        <!-- DATA PANEL -->
-        <div class="sidebar-panel" id="panel-data">
-          <div class="mb-16">
-            <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">External Data Sources</h4>
-            <a href="https://dwr.state.co.us/Tools/Stations" target="_blank" 
-               style="display: block; padding: 10px 12px; background: var(--secondary-bg); border: 1px solid var(--border-color); 
-               border-radius: var(--radius-md); text-decoration: none; color: var(--text-primary); font-size: 13px; margin-bottom: 8px;">
-              Colorado Gauging Stations →
-            </a>
-            <a href="https://maps.dnrgis.state.co.us/dwr/" target="_blank" 
-               style="display: block; padding: 10px 12px; background: var(--secondary-bg); border: 1px solid var(--border-color); 
-               border-radius: var(--radius-md); text-decoration: none; color: var(--text-primary); font-size: 13px;">
-              DWR Reservoir Maps →
-            </a>
+        <div class="panel" id="panel-dashboard">
+          <p class="muted" style="margin-bottom:10px;">Platform summary for Blue River. Values are demo samples until live SWE and DWR feeds are connected.</p>
+          <div class="form-field">
+            <label for="season-period">Seasonal forecast period</label>
+            <select id="season-period">
+              <option value="aprJul">April through July</option>
+              <option value="aprSep">April through September</option>
+            </select>
           </div>
+          <div class="metric-grid" id="dash-metrics"></div>
+          <div class="chart-wrap"><canvas id="swe-chart"></canvas></div>
+          <div class="section-label">10-day streamflow forecast</div>
+          <div class="chart-wrap"><canvas id="flow-chart"></canvas></div>
+          <p class="muted" id="forecast-note"></p>
+        </div>
 
-          <div>
-            <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Watershed Information</h4>
-            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
-              <p style="margin-bottom: 6px;"><strong>HUC8:</strong> 14010002</p>
-              <p style="margin-bottom: 6px;"><strong>State:</strong> Colorado</p>
-              <p style="margin-bottom: 6px;"><strong>Area:</strong> 437,217 Acres</p>
-              <p><strong>Main River:</strong> Blue River</p>
-            </div>
-          </div>
+        <div class="panel" id="panel-data">
+          <div class="section-label">External networks</div>
+          <a class="link-card" id="link-dwr-stations" target="_blank" rel="noopener">Colorado gauging stations →</a>
+          <a class="link-card" id="link-dwr-map" target="_blank" rel="noopener">DWR reservoir map viewer →</a>
+          <div class="section-label">Watershed record</div>
+          <p class="muted" id="data-facts"></p>
         </div>
       </div>
     </aside>
 
-    <!-- MAP CONTAINER -->
-    <div id="map-container">
+    <div id="map-wrap">
       <div id="map"></div>
+      <div class="search-panel" id="search-panel"></div>
+      <div class="toast" id="toast"></div>
+      <div class="measure-chip" id="measure-chip"></div>
 
-      <!-- MAP CONTROLS - Separate Widgets -->
       <div id="map-controls">
-        <button class="control-btn" id="btn-home">
-          <span class="control-tooltip">Reset View</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
+        <button class="ctrl" id="btn-home" type="button">
+          <span class="tip">Home view</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </button>
-
-        <div class="control-group">
-          <button class="control-btn" id="btn-zoom-in">
-            <span class="control-tooltip">Zoom In</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <text x="12" y="17" text-anchor="middle" font-size="20" font-weight="bold" fill="currentColor" stroke="none">+</text>
-            </svg>
+        <div class="ctrl-group">
+          <button class="ctrl" id="btn-zoom-in" type="button">
+            <span class="tip">Zoom in</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
-          <button class="control-btn" id="btn-zoom-out">
-            <span class="control-tooltip">Zoom Out</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <text x="12" y="17" text-anchor="middle" font-size="20" font-weight="bold" fill="currentColor" stroke="none">−</text>
-            </svg>
+          <button class="ctrl" id="btn-zoom-out" type="button">
+            <span class="tip">Zoom out</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
-
-        <button class="control-btn" id="btn-search">
-          <span class="control-tooltip">Search Location</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <button class="ctrl" id="btn-search" type="button">
+          <span class="tip">Search</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="ctrl" id="btn-3d" type="button">
+          <span class="tip">3D terrain tilt</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </button>
+        <button class="ctrl active" id="btn-snow" type="button">
+          <span class="tip">Snow mode</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <path d="M12 3v18M5.6 6.6l12.8 10.8M5.6 17.4L18.4 6.6"/>
+            <path d="M12 3l2.2 2.2M12 3L9.8 5.2M12 21l2.2-2.2M12 21l-2.2-2.2"/>
+            <path d="M5.6 6.6l3 .2M5.6 6.6l.6 2.8M18.4 17.4l-3-.2M18.4 17.4l-.6-2.8"/>
+            <path d="M5.6 17.4l3-.2M5.6 17.4l.6-2.8M18.4 6.6l-3 .2M18.4 6.6l-.6 2.8"/>
           </svg>
         </button>
-
-        <button class="control-btn" id="btn-location">
-          <span class="control-tooltip">My Location</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="3" fill="currentColor"/>
-            <line x1="12" y1="2" x2="12" y2="6"/>
-            <line x1="12" y1="18" x2="12" y2="22"/>
-            <line x1="2" y1="12" x2="6" y2="12"/>
-            <line x1="18" y1="12" x2="22" y2="12"/>
-          </svg>
+        <button class="ctrl" id="btn-draw" type="button">
+          <span class="tip">Draw and edit</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
         </button>
-
-        <button class="control-btn" id="btn-fullscreen">
-          <span class="control-tooltip">Fullscreen</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="15 3 21 3 21 9"/>
-            <polyline points="9 21 3 21 3 15"/>
-            <line x1="21" y1="3" x2="14" y2="10"/>
-            <line x1="3" y1="21" x2="10" y2="14"/>
-          </svg>
+        <button class="ctrl" id="btn-add" type="button">
+          <span class="tip">Add component</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-
-        <button class="control-btn" id="btn-3d">
-          <span class="control-tooltip">Toggle 3D</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-            <polyline points="2 17 12 22 22 17"/>
-            <polyline points="2 12 12 17 22 12"/>
-          </svg>
-        </button>
-
-        <button class="control-btn" id="btn-add-marker">
-          <span class="control-tooltip">Add Component</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </button>
-
-        <button class="control-btn" id="btn-measure">
-          <span class="control-tooltip">Measure Distance</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="21" y1="10" x2="3" y2="10"/>
-            <line x1="21" y1="6" x2="3" y2="6"/>
-            <line x1="21" y1="14" x2="3" y2="14"/>
-            <line x1="21" y1="18" x2="3" y2="18"/>
-          </svg>
+        <button class="ctrl" id="btn-measure" type="button">
+          <span class="tip">Measure</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12h20"/><path d="M6 10v4M10 10v4M14 10v4M18 10v4"/></svg>
         </button>
       </div>
 
-      <!-- STATUS BAR -->
+      <div class="flyout" id="draw-menu">
+        <div class="flyout-item" data-draw="polygon">Draw basin / watershed</div>
+        <div class="flyout-item" data-draw="line">Draw river / canal</div>
+        <div class="flyout-item" data-draw="edit">Edit vertices</div>
+        <div class="flyout-item" data-draw="breakpoint">Add reservoir breakpoint</div>
+        <div class="flyout-item" data-draw="trash">Delete selected</div>
+        <div class="flyout-item" data-draw="simple_select">Finish drawing</div>
+      </div>
+
+      <div class="flyout" id="add-menu">
+        <div class="flyout-item" data-add="gauge">Gauge station</div>
+        <div class="flyout-item" data-add="dam">Dam</div>
+        <div class="flyout-item" data-add="diversion">Diversion / reversion</div>
+        <div class="flyout-item" data-add="note">Field note</div>
+        <div class="flyout-item" data-add="breakpoint">Reservoir breakpoint</div>
+      </div>
+
       <div id="status-bar">
-        <div class="status-item">
-          <div class="status-icon" style="background: var(--water-blue);"></div>
-          <span class="status-label">SWE:</span>
-          <span class="status-value" id="stat-swe">14.2 in</span>
-        </div>
-        <div class="status-item">
-          <div class="status-icon" style="background: var(--reservoir-blue);"></div>
-          <span class="status-label">Reservoir Storage:</span>
-          <span class="status-value" id="stat-storage">8,950 AF</span>
-        </div>
-        <div class="status-item">
-          <div class="status-icon" style="background: var(--gauge-green);"></div>
-          <span class="status-label">Inflow:</span>
-          <span class="status-value" id="stat-inflow">42 cfs</span>
-        </div>
-        <div class="status-item">
-          <div class="status-icon" style="background: var(--river-blue);"></div>
-          <span class="status-label">Outflow:</span>
-          <span class="status-value" id="stat-outflow">28 cfs</span>
-        </div>
+        <div class="status-item"><span class="dot" style="background:#1565A8"></span><span class="k">SWE</span><span class="v" id="stat-swe"></span></div>
+        <div class="status-item"><span class="dot" style="background:#2F4A6D"></span><span class="k">SWE vol</span><span class="v" id="stat-swe-vol"></span></div>
+        <div class="status-item"><span class="dot" style="background:#0E7490"></span><span class="k">Storage</span><span class="v" id="stat-storage"></span></div>
+        <div class="status-item"><span class="dot" style="background:#15803D"></span><span class="k">Inflow</span><span class="v" id="stat-inflow"></span></div>
+        <div class="status-item"><span class="dot" style="background:#1D8CD6"></span><span class="k">Outflow</span><span class="v" id="stat-outflow"></span></div>
+        <div class="status-item"><span class="dot" style="background:#6B778C"></span><span class="k">Cursor</span><span class="v" id="stat-coords"></span></div>
       </div>
 
-      <!-- ADD MARKER MENU -->
-      <div id="add-marker-menu">
-        <div class="marker-option" data-type="gauge">
-          <div class="marker-option-icon" style="color: var(--gauge-green);">◉</div>
-          <div class="marker-option-text">Gauge Station</div>
-        </div>
-        <div class="marker-option" data-type="dam">
-          <div class="marker-option-icon" style="color: var(--dam-gray);">▬</div>
-          <div class="marker-option-text">Dam</div>
-        </div>
-        <div class="marker-option" data-type="note">
-          <div class="marker-option-icon" style="color: var(--warning-amber);">●</div>
-          <div class="marker-option-text">Field Note</div>
-        </div>
-      </div>
-
-      <!-- DETAIL PANEL -->
       <aside id="detail-panel">
-        <div class="detail-header">
+        <div class="detail-head">
           <div>
-            <span class="detail-type" id="detail-type">Gauge</span>
-            <h3 id="detail-title">Station Name</h3>
+            <div class="detail-type" id="detail-type">Feature</div>
+            <h3 id="detail-title"></h3>
           </div>
-          <button class="detail-close" id="btn-close-detail">×</button>
+          <button class="icon-btn" id="btn-close-detail" type="button">×</button>
         </div>
-        <div class="detail-body" id="detail-body">
-          <!-- Dynamic content will be inserted here -->
-        </div>
+        <div class="detail-body" id="detail-body"></div>
       </aside>
     </div>
   </div>
 </div>
 
-<script>
-// ================================================
-// MAPBOX CONFIGURATION
-// ================================================
-mapboxgl.accessToken = 'pk.eyJ1IjoiYWhtZWRoYXNoZW0xIiwiYSI6ImNsajBjYTdnMjB2M3ozY281bjlhZGhoanEifQ.b-7aKnfttDWLdhzFRr4pxQ';
+<div class="modal-back" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Title</h3>
+    <p id="modal-copy"></p>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button class="btn" id="modal-cancel" type="button">Cancel</button>
+      <button class="btn btn-primary" id="modal-ok" type="button">Save</button>
+    </div>
+  </div>
+</div>
 
-// ================================================
-// INITIAL VIEW (Blue River Watershed Center)
-// ================================================
-const HOME_VIEW = {
-  center: [-106.20, 39.75],
-  zoom: 9.5,
-  pitch: 60,
-  bearing: 0
-};
-
-// ================================================
-// INITIALIZE MAP
-// ================================================
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/satellite-streets-v12',
-  center: HOME_VIEW.center,
-  zoom: HOME_VIEW.zoom,
-  pitch: HOME_VIEW.pitch,
-  bearing: HOME_VIEW.bearing
-});
-
-// ================================================
-// STATE MANAGEMENT
-// ================================================
-let is3DEnabled = true;
-let addMarkerMode = null;
-let userMarkers = [];
-
-// ================================================
-// MAP LOAD EVENT
-// ================================================
-map.on('load', () => {
-  console.log('Map loaded successfully');
-  
-  // Add 3D terrain
-  map.addSource('mapbox-dem', {
-    'type': 'raster-dem',
-    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-    'tileSize': 512,
-    'maxzoom': 14
-  });
-  map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
-  
-  // Load GeoJSON data
-  loadBasinData();
-  loadWatershedData();
-  loadRiverData();
-  loadReservoirData();
-  loadDamData();
-});
-
-// ================================================
-// LOAD GEOJSON DATA
-// ================================================
-async function loadBasinData() {
-  try {
-    const response = await fetch('Basin_Colorado.geojson');
-    const data = await response.json();
-    
-    map.addSource('basin', {
-      type: 'geojson',
-      data: data
-    });
-    
-    // Basin boundary line
-    map.addLayer({
-      id: 'basin-line',
-      type: 'line',
-      source: 'basin',
-      paint: {
-        'line-color': '#6C757D',
-        'line-width': 2,
-        'line-dasharray': [4, 2]
-      }
-    });
-    
-    // Basin fill
-    map.addLayer({
-      id: 'basin-fill',
-      type: 'fill',
-      source: 'basin',
-      paint: {
-        'fill-color': '#6C757D',
-        'fill-opacity': 0.05
-      }
-    });
-    
-    console.log('Basin data loaded');
-  } catch (error) {
-    console.error('Error loading basin:', error);
-  }
-}
-
-async function loadWatershedData() {
-  try {
-    const response = await fetch('Watershed_Blue.geojson');
-    const data = await response.json();
-    
-    map.addSource('watershed', {
-      type: 'geojson',
-      data: data
-    });
-    
-    // Watershed boundary line
-    map.addLayer({
-      id: 'watershed-line',
-      type: 'line',
-      source: 'watershed',
-      paint: {
-        'line-color': '#0D6EFD',
-        'line-width': 3,
-        'line-dasharray': [2, 2]
-      }
-    });
-    
-    // Watershed fill
-    map.addLayer({
-      id: 'watershed-fill',
-      type: 'fill',
-      source: 'watershed',
-      paint: {
-        'fill-color': '#0D6EFD',
-        'fill-opacity': 0.1
-      }
-    });
-    
-    console.log('Watershed data loaded');
-  } catch (error) {
-    console.error('Error loading watershed:', error);
-  }
-}
-
-async function loadRiverData() {
-  try {
-    const response = await fetch('Blue_River.geojson');
-    const data = await response.json();
-    
-    map.addSource('river', {
-      type: 'geojson',
-      data: data
-    });
-    
-    // River line
-    map.addLayer({
-      id: 'river-line',
-      type: 'line',
-      source: 'river',
-      paint: {
-        'line-color': '#1E88E5',
-        'line-width': 5
-      }
-    });
-    
-    // Animated flow overlay (REVERSED - upstream direction)
-    map.addLayer({
-      id: 'river-flow',
-      type: 'line',
-      source: 'river',
-      paint: {
-        'line-color': '#64B5F6',
-        'line-width': 3,
-        'line-dasharray': [0, 4, 3]
-      }
-    });
-    
-    // Start the continuous animation
-    startRiverAnimation();
-    
-    console.log('River data loaded');
-  } catch (error) {
-    console.error('Error loading river:', error);
-  }
-}
-
-async function loadReservoirData() {
-  try {
-    const response = await fetch('Reservoirs_2Count.geojson');
-    const data = await response.json();
-    
-    map.addSource('reservoirs', {
-      type: 'geojson',
-      data: data
-    });
-    
-    // Reservoir fill
-    map.addLayer({
-      id: 'reservoirs-fill',
-      type: 'fill',
-      source: 'reservoirs',
-      paint: {
-        'fill-color': '#1565C0',
-        'fill-opacity': 0.6
-      }
-    });
-    
-    // Reservoir outline
-    map.addLayer({
-      id: 'reservoirs-outline',
-      type: 'line',
-      source: 'reservoirs',
-      paint: {
-        'line-color': '#0D47A1',
-        'line-width': 2
-      }
-    });
-    
-    // Add click events
-    map.on('click', 'reservoirs-fill', (e) => {
-      const properties = e.features[0].properties;
-      showDetailPanel('Reservoir', properties.NAME, {
-        'Type': properties.FTYPE || 'Lake/Pond',
-        'Location': 'Blue River Basin',
-        'Status': 'Active'
-      }, null);
-    });
-    
-    map.on('mouseenter', 'reservoirs-fill', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    
-    map.on('mouseleave', 'reservoirs-fill', () => {
-      map.getCanvas().style.cursor = '';
-    });
-    
-    console.log('Reservoir data loaded');
-  } catch (error) {
-    console.error('Error loading reservoirs:', error);
-  }
-}
-
-async function loadDamData() {
-  try {
-    const response = await fetch('Dams_2Count.geojson');
-    const data = await response.json();
-    
-    // Store dam features for toggle
-    window.damFeatures = data.features;
-    
-    // Add dam markers
-    data.features.forEach((feature, index) => {
-      const coords = feature.geometry.coordinates;
-      const props = feature.properties;
-      
-      // Create custom dam marker element
-      const el = document.createElement('div');
-      el.className = 'dam-marker marker-pulse';
-      el.id = `dam-marker-${index}`;
-      el.style.width = '28px';
-      el.style.height = '28px';
-      el.style.backgroundColor = '#495057';
-      el.style.borderRadius = '4px';
-      el.style.border = '3px solid white';
-      el.style.cursor = 'pointer';
-      el.style.boxShadow = '0 3px 10px rgba(0,0,0,0.4)';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.fontWeight = 'bold';
-      el.style.color = 'white';
-      el.style.fontSize = '14px';
-      el.innerHTML = '▬';
-      
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(coords)
-        .addTo(map);
-      
-      // Store marker for later toggle
-      if (!window.damMarkers) window.damMarkers = [];
-      window.damMarkers.push(marker);
-      
-      // Click handler
-      el.addEventListener('click', () => {
-        showDetailPanel('Dam', props.NAME, {
-          'Type': props.TYPE || 'Storage',
-          'Reservoir': props.LAKE_NAME || 'N/A',
-          'River': props.RIVER_NAME || 'Blue River',
-          'Owner': props.OWNER || 'N/A'
-        }, props.HYPERLINK);
-      });
-    });
-    
-    console.log('Dam data loaded - 2 dams visualized');
-  } catch (error) {
-    console.error('Error loading dams:', error);
-  }
-}
-
-// ================================================
-// RIVER FLOW ANIMATION - REVERSED (Upstream Direction) - SMOOTH CONTINUOUS
-// ================================================
-let dashArraySequence = [
-  [0, 4, 3],
-  [0, 3.5, 3, 0.5],
-  [0, 3, 3, 1],
-  [0, 2.5, 3, 1.5],
-  [0, 2, 3, 2],
-  [0, 1.5, 3, 2.5],
-  [0, 1, 3, 3],
-  [0, 0.5, 3, 3.5],
-  [0, 0, 3, 4],
-  [0.5, 0, 2.5, 4],
-  [1, 0, 2, 4],
-  [1.5, 0, 1.5, 4],
-  [2, 0, 1, 4],
-  [2.5, 0, 0.5, 4],
-  [3, 0, 0, 4]
-];
-
-let step = 0;
-let animationRunning = false;
-
-function animateRiverFlow() {
-  if (!animationRunning) return;
-  
-  if (map.getLayer('river-flow')) {
-    map.setPaintProperty('river-flow', 'line-dasharray', dashArraySequence[step]);
-    step = (step + 1) % dashArraySequence.length;
-  }
-  
-  // Continuous smooth animation
-  setTimeout(() => {
-    if (animationRunning) {
-      requestAnimationFrame(animateRiverFlow);
-    }
-  }, 50);
-}
-
-// Start animation
-function startRiverAnimation() {
-  if (!animationRunning) {
-    animationRunning = true;
-    animateRiverFlow();
-  }
-}
-
-// ================================================
-// CONTROL BUTTON HANDLERS
-// ================================================
-document.getElementById('btn-home').addEventListener('click', () => {
-  map.flyTo({
-    center: HOME_VIEW.center,
-    zoom: HOME_VIEW.zoom,
-    pitch: HOME_VIEW.pitch,
-    bearing: HOME_VIEW.bearing,
-    duration: 1500
-  });
-});
-
-document.getElementById('btn-zoom-in').addEventListener('click', () => {
-  map.zoomIn();
-});
-
-document.getElementById('btn-zoom-out').addEventListener('click', () => {
-  map.zoomOut();
-});
-
-document.getElementById('btn-search').addEventListener('click', () => {
-  const searchQuery = prompt('Enter location name or coordinates:');
-  if (searchQuery) {
-    // You can integrate with Mapbox Geocoding API here
-    alert('Search functionality coming soon!');
-  }
-});
-
-document.getElementById('btn-location').addEventListener('click', () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      map.flyTo({
-        center: [position.coords.longitude, position.coords.latitude],
-        zoom: 14,
-        duration: 1500
-      });
-    }, () => {
-      alert('Unable to retrieve your location');
-    });
-  } else {
-    alert('Geolocation is not supported by your browser');
-  }
-});
-
-document.getElementById('btn-fullscreen').addEventListener('click', () => {
-  const elem = document.documentElement;
-  if (!document.fullscreenElement) {
-    elem.requestFullscreen().catch(err => {
-      alert('Error attempting to enable fullscreen');
-    });
-    document.getElementById('btn-fullscreen').classList.add('active');
-  } else {
-    document.exitFullscreen();
-    document.getElementById('btn-fullscreen').classList.remove('active');
-  }
-});
-
-document.getElementById('btn-3d').addEventListener('click', () => {
-  is3DEnabled = !is3DEnabled;
-  map.easeTo({
-    pitch: is3DEnabled ? 60 : 0,
-    duration: 1000
-  });
-  document.getElementById('btn-3d').classList.toggle('active');
-});
-
-// ================================================
-// ADD MARKER FUNCTIONALITY
-// ================================================
-document.getElementById('btn-add-marker').addEventListener('click', (e) => {
-  const menu = document.getElementById('add-marker-menu');
-  const rect = e.target.getBoundingClientRect();
-  menu.style.top = rect.top + 'px';
-  menu.style.right = (window.innerWidth - rect.left + 10) + 'px';
-  menu.classList.toggle('open');
-});
-
-document.querySelectorAll('.marker-option').forEach(option => {
-  option.addEventListener('click', (e) => {
-    addMarkerMode = e.currentTarget.dataset.type;
-    document.getElementById('add-marker-menu').classList.remove('open');
-    document.getElementById('btn-add-marker').classList.add('active');
-    map.getCanvas().style.cursor = 'crosshair';
-  });
-});
-
-map.on('click', (e) => {
-  if (addMarkerMode) {
-    addUserMarker(e.lngLat, addMarkerMode);
-    addMarkerMode = null;
-    document.getElementById('btn-add-marker').classList.remove('active');
-    map.getCanvas().style.cursor = '';
-  }
-});
-
-function addUserMarker(lngLat, type) {
-  const el = document.createElement('div');
-  el.className = 'user-marker marker-pulse';
-  el.style.width = '24px';
-  el.style.height = '24px';
-  el.style.borderRadius = '50%';
-  el.style.border = '3px solid white';
-  el.style.cursor = 'pointer';
-  el.style.boxShadow = '0 3px 10px rgba(0,0,0,0.4)';
-  el.style.display = 'flex';
-  el.style.alignItems = 'center';
-  el.style.justifyContent = 'center';
-  el.style.fontWeight = 'bold';
-  el.style.fontSize = '14px';
-  el.style.color = 'white';
-  
-  if (type === 'gauge') {
-    el.style.backgroundColor = '#198754';
-    el.innerHTML = '◉';
-  } else if (type === 'dam') {
-    el.style.backgroundColor = '#495057';
-    el.innerHTML = '▬';
-  } else {
-    el.style.backgroundColor = '#FD7E14';
-    el.innerHTML = '●';
-  }
-  
-  const marker = new mapboxgl.Marker(el)
-    .setLngLat(lngLat)
-    .addTo(map);
-  
-  userMarkers.push(marker);
-  
-  const popup = new mapboxgl.Popup({ offset: 25 })
-    .setHTML(`
-      <div class="popup-content">
-        <div class="popup-title">${type.charAt(0).toUpperCase() + type.slice(1)} Added</div>
-        <div class="popup-info">
-          <p><strong>Coordinates:</strong><br>${lngLat.lat.toFixed(5)}, ${lngLat.lng.toFixed(5)}</p>
-        </div>
-      </div>
-    `);
-  
-  marker.setPopup(popup);
-}
-
-// ================================================
-// DETAIL PANEL
-// ================================================
-function showDetailPanel(type, title, stats, link) {
-  document.getElementById('detail-type').textContent = type;
-  document.getElementById('detail-title').textContent = title;
-  
-  let statsHTML = '<div class="detail-stat-grid">';
-  for (const [key, value] of Object.entries(stats)) {
-    statsHTML += `
-      <div class="detail-stat">
-        <div class="detail-stat-label">${key}</div>
-        <div class="detail-stat-value">${value}</div>
-      </div>
-    `;
-  }
-  statsHTML += '</div>';
-  
-  if (link && link.trim() !== '') {
-    statsHTML += `<a href="${link}" target="_blank" class="detail-link">View Details →</a>`;
-  }
-  
-  document.getElementById('detail-body').innerHTML = statsHTML;
-  document.getElementById('detail-panel').classList.add('open');
-}
-
-document.getElementById('btn-close-detail').addEventListener('click', () => {
-  document.getElementById('detail-panel').classList.remove('open');
-});
-
-// ================================================
-// LAYER TOGGLES
-// ================================================
-document.getElementById('toggle-basin').addEventListener('change', (e) => {
-  const visibility = e.target.checked ? 'visible' : 'none';
-  if (map.getLayer('basin-line')) map.setLayoutProperty('basin-line', 'visibility', visibility);
-  if (map.getLayer('basin-fill')) map.setLayoutProperty('basin-fill', 'visibility', visibility);
-});
-
-document.getElementById('toggle-watershed').addEventListener('change', (e) => {
-  const visibility = e.target.checked ? 'visible' : 'none';
-  if (map.getLayer('watershed-line')) map.setLayoutProperty('watershed-line', 'visibility', visibility);
-  if (map.getLayer('watershed-fill')) map.setLayoutProperty('watershed-fill', 'visibility', visibility);
-});
-
-document.getElementById('toggle-river').addEventListener('change', (e) => {
-  const visibility = e.target.checked ? 'visible' : 'none';
-  if (map.getLayer('river-line')) map.setLayoutProperty('river-line', 'visibility', visibility);
-  if (map.getLayer('river-flow')) map.setLayoutProperty('river-flow', 'visibility', visibility);
-});
-
-document.getElementById('toggle-reservoirs').addEventListener('change', (e) => {
-  const visibility = e.target.checked ? 'visible' : 'none';
-  if (map.getLayer('reservoirs-fill')) map.setLayoutProperty('reservoirs-fill', 'visibility', visibility);
-  if (map.getLayer('reservoirs-outline')) map.setLayoutProperty('reservoirs-outline', 'visibility', visibility);
-});
-
-document.getElementById('toggle-dams').addEventListener('change', (e) => {
-  const display = e.target.checked ? 'flex' : 'none';
-  if (window.damMarkers) {
-    window.damMarkers.forEach(marker => {
-      marker.getElement().style.display = display;
-    });
-  }
-});
-
-document.getElementById('toggle-terrain').addEventListener('change', (e) => {
-  if (e.target.checked) {
-    map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
-  } else {
-    map.setTerrain(null);
-  }
-});
-
-// ================================================
-// SIDEBAR TABS
-// ================================================
-document.querySelectorAll('.sidebar-tab').forEach(tab => {
-  tab.addEventListener('click', (e) => {
-    const targetTab = e.currentTarget.dataset.tab;
-    
-    document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.sidebar-panel').forEach(p => p.classList.remove('active'));
-    
-    e.currentTarget.classList.add('active');
-    document.getElementById('panel-' + targetTab).classList.add('active');
-  });
-});
-
-// ================================================
-// CLOSE MENUS ON OUTSIDE CLICK
-// ================================================
-document.addEventListener('click', (e) => {
-  const menu = document.getElementById('add-marker-menu');
-  const btn = document.getElementById('btn-add-marker');
-  if (!menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-    menu.classList.remove('open');
-  }
-});
-
-console.log('Blue River Watershed System initialized');
-</script>
-
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.28.1/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/map.js"></script>
+<script src="js/layers.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/draw-tools.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/export.js"></script>
+<script src="js/widgets.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

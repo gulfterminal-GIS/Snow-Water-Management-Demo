@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "DIL-WL-01",
+      "geometry": { "type": "Point", "coordinates": [-106.0552, 39.6051] },
+      "properties": {
+        "sensorId": "DIL-WL-01",
+        "name": "Dillon North water level",
+        "reservoir": "Dillon Reservoir",
+        "type": "Water level",
+        "stageFt": 9012.4,
+        "storageAf": 198400,
+        "status": "Active",
+        "updated": "2026-03-18T14:00:00Z",
+        "demo": true
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "DIL-WL-02",
+      "geometry": { "type": "Point", "coordinates": [-106.0501, 39.5852] },
+      "properties": {
+        "sensorId": "DIL-WL-02",
+        "name": "Dillon South water level",
+        "reservoir": "Dillon Reservoir",
+        "type": "Water level",
+        "stageFt": 9011.8,
+        "storageAf": 197850,
+        "status": "Active",
+        "updated": "2026-03-18T14:00:00Z",
+        "demo": true
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GRN-WL-01",
+      "geometry": { "type": "Point", "coordinates": [-106.2804, 39.8610] },
+      "properties": {
+        "sensorId": "GRN-WL-01",
+        "name": "Green Mountain East water level",
+        "reservoir": "Green Mountain Reservoir",
+        "type": "Water level",
+        "stageFt": 7948.6,
+        "storageAf": 112200,
+        "status": "Active",
+        "updated": "2026-03-18T14:00:00Z",
+        "demo": true
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GRN-WL-02",
+      "geometry": { "type": "Point", "coordinates": [-106.3185, 39.8724] },
+      "properties": {
+        "sensorId": "GRN-WL-02",
+        "name": "Green Mountain West water level",
+        "reservoir": "Green Mountain Reservoir",
+        "type": "Water level",
+        "stageFt": 7948.2,
+        "storageAf": 111940,
+        "status": "Active",
+        "updated": "2026-03-18T14:00:00Z",
+        "demo": true
+      }
+    }
+  ]
+}

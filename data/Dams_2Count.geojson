@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[-106.33054079793928,39.877161938870387]},"properties":{"OBJECTID":1,"NAME":"Green Mountain Dam","TYPE":"Storage","LAKE_NAME":"Green Mountain Reservoir","RIVER_NAME":"Blue River","HYPERLINK":"https://www.usbr.gov/projects/index.php?id=174","OWNER":"Bureau of Reclamation"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[-106.0608735385395,39.622687294884265]},"properties":{"OBJECTID":2,"NAME":"Dillon Dam","TYPE":"Storage","LAKE_NAME":"Dillon Reservoir","RIVER_NAME":"Blue River","HYPERLINK":" ","OWNER":"Denver Water"}}]
+}
